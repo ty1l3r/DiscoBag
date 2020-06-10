@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -35,22 +37,22 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=100)
      */
     private $firstName;
 
     /**
-     * @ORM\Column(type="string", length=40)
+     * @ORM\Column(type="string", length=100)
      */
-    private $name;
+    private $lastName;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $djName;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $crew;
 
@@ -60,9 +62,31 @@ class User implements UserInterface
     private $genre;
 
     /**
-     * @ORM\Column(type="smallint")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $age;
+    private $avatar;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $birth;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity=Set::class, mappedBy="user")
+     */
+    private $sets;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Social::class, inversedBy="user", cascade={"persist", "remove"})
+     */
+    private $social;
+
+    public function __construct()
+    {
+        $this->sets = new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -154,14 +178,31 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getName(): ?string
+    public function getLastName(): ?string
     {
-        return $this->name;
+        return $this->lastName;
     }
 
-    public function setName(string $name): self
+    public function setLastName(string $lastName): self
     {
-        $this->name = $name;
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
+
+        // set the owning side of the relation if necessary
+        if ($utilisateur->getUserId() !== $this) {
+            $utilisateur->setUserId($this);
+        }
 
         return $this;
     }
@@ -171,7 +212,7 @@ class User implements UserInterface
         return $this->djName;
     }
 
-    public function setDjName(string $djName): self
+    public function setDjName(?string $djName): self
     {
         $this->djName = $djName;
 
@@ -202,14 +243,70 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAge(): ?int
+    public function getAvatar(): ?string
     {
-        return $this->age;
+        return $this->avatar;
     }
 
-    public function setAge(int $age): self
+    public function setAvatar(?string $avatar): self
     {
-        $this->age = $age;
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getBirth(): ?\DateTimeInterface
+    {
+        return $this->birth;
+    }
+
+    public function setBirth(\DateTimeInterface $birth): self
+    {
+        $this->birth = $birth;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|Set[]
+     */
+    public function getSets(): Collection
+    {
+        return $this->sets;
+    }
+
+    public function addSet(Set $set): self
+    {
+        if (!$this->sets->contains($set)) {
+            $this->sets[] = $set;
+            $set->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSet(Set $set): self
+    {
+        if ($this->sets->contains($set)) {
+            $this->sets->removeElement($set);
+            // set the owning side to null (unless already changed)
+            if ($set->getUser() === $this) {
+                $set->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSocial(): ?Social
+    {
+        return $this->social;
+    }
+
+    public function setSocial(?Social $social): self
+    {
+        $this->social = $social;
 
         return $this;
     }
