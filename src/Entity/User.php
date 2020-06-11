@@ -67,7 +67,7 @@ class User implements UserInterface
     private $avatar;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $birth;
 
@@ -186,23 +186,6 @@ class User implements UserInterface
     public function setLastName(string $lastName): self
     {
         $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function getUtilisateur(): ?Utilisateur
-    {
-        return $this->utilisateur;
-    }
-
-    public function setUtilisateur(Utilisateur $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
-
-        // set the owning side of the relation if necessary
-        if ($utilisateur->getUserId() !== $this) {
-            $utilisateur->setUserId($this);
-        }
 
         return $this;
     }

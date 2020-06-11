@@ -33,6 +33,7 @@
         "symfony/yaml": "5.1.*"
     },
     "require-dev": {
+        "aalaap/faker-youtube": "^1.2",
         "doctrine/doctrine-fixtures-bundle": "^3.3",
         "fzaninotto/faker": "^1.9",
         "symfony/debug-pack": "*",

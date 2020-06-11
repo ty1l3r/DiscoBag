@@ -25,7 +25,7 @@ class Disk
     private $diskTitle;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="string", length=4)
      */
     private $year;
 
@@ -72,12 +72,12 @@ class Disk
         return $this;
     }
 
-    public function getYear(): ?\DateTimeInterface
+    public function getYear(): ?string
     {
         return $this->year;
     }
 
-    public function setYear(\DateTimeInterface $year): self
+    public function setYear(string $year): self
     {
         $this->year = $year;
 
